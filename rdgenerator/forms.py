@@ -3,7 +3,7 @@ from django import forms
 class GenerateForm(forms.Form):
     #Platform
     platform = forms.ChoiceField(choices=[('windows','Windows'),('linux','Linux (currently unavailable)'),('android','Android (testing now available)')], initial='windows')
-    version = forms.ChoiceField(choices=[('master','beta'),('1.3.1','1.3.1'),('1.3.0','1.3.0')], initial='1.3.1')
+    version = forms.ChoiceField(choices=[('master','nightly'),('1.3.5','1.3.5'),('1.3.4','1.3.4'),('1.3.3','1.3.3'),('1.3.2','1.3.2'),('1.3.1','1.3.1'),('1.3.0','1.3.0')], initial='1.3.5')
     delayFix = forms.BooleanField(initial=True, required=False)
 
     #General
@@ -66,3 +66,8 @@ class GenerateForm(forms.Form):
 
     defaultManual = forms.CharField(widget=forms.Textarea, required=False)
     overrideManual = forms.CharField(widget=forms.Textarea, required=False)
+
+    #custom added features
+    cycleMonitor = forms.BooleanField(initial=False, required=False)
+    xOffline = forms.BooleanField(initial=False, required=False)
+    hidecm = forms.BooleanField(initial=False, required=False)
