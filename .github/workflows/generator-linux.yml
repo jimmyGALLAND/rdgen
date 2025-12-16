@@ -303,8 +303,6 @@ jobs:
           wget https://raw.githubusercontent.com/bryangerlach/rdgen/refs/heads/master/.github/patches/removeSetupServerTip.diff
           git apply removeSetupServerTip.diff
           echo -n "${{ inputs.custom }}" | cat > ./custom_.txt
-          # sed -i '/intl:/a \ \ archive: ^3.6.1' ./flutter/pubspec.yaml
-          sed -i -e 's|https://admin.rustdesk.com|${{ inputs.apiServer }}|' ./src/common.rs
           
       - name: change url to custom
         if: fromJson(inputs.extras).urlLink != 'https://rustdesk.com'
@@ -381,6 +379,8 @@ jobs:
 
       - uses: rustdesk-org/run-on-arch-action@amd64-support
         name: Build rustdesk
+        env:
+          API_SERVER: ${{ inputs.apiServer }}
         id: vcpkg
         if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
         with:
@@ -394,6 +394,7 @@ jobs:
             --volume "${PWD}:/workspace"
             --volume "/opt/artifacts:/opt/artifacts"
           shell: /bin/bash
+
           install: |
             apt-get update -y
             echo -e "installing deps"
@@ -436,6 +437,7 @@ jobs:
             # output devs
             ls -l ./
             tree -L 3 /opt/artifacts/vcpkg/installed
+
           run: |
             # disable git safe.directory
             git config --global --add safe.directory "*"
@@ -462,7 +464,7 @@ jobs:
               export JOBS=""
             fi
             echo $JOBS
-            cargo build --lib $JOBS --features hwcodec,flutter,unix-file-copy-paste --release
+            API_SERVER="${{ inputs.apiServer }}" cargo build --lib $JOBS --features hwcodec,flutter,unix-file-copy-paste --release
             rm -rf target/release/deps target/release/build
             rm -rf ~/.cargo
 
