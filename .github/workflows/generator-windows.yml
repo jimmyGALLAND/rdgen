@@ -410,7 +410,24 @@ jobs:
           vcpkgDirectory: C:\vcpkg
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
           doNotCache: false
-
+          
+      - name: Debug vcpkg configuration
+        shell: bash
+        run: |
+          echo "=== vcpkg version ==="
+          ./vcpkg/vcpkg version
+      
+          echo "=== vcpkg.json ==="
+          cat vcpkg.json
+      
+          echo "=== vcpkg configuration ==="
+          cat vcpkg-configuration.json 2>/dev/null || true
+      
+          echo "=== pkgconf registry ==="
+          cat ./vcpkg/versions/p-/pkgconf.json 2>/dev/null || true
+      
+          echo "=== baseline ==="
+          grep -n '"pkgconf"' ./vcpkg/versions/baseline.json || true
       - name: Install vcpkg dependencies
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: ${{ matrix.job.vcpkg-triplet }}
