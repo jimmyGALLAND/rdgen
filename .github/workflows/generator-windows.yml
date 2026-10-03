@@ -414,20 +414,26 @@ jobs:
       - name: Debug vcpkg configuration
         shell: bash
         run: |
+          echo "=== Environment ==="
+          echo "VCPKG_ROOT=$VCPKG_ROOT"
+          echo "RUNVCPKG_VCPKG_ROOT=$RUNVCPKG_VCPKG_ROOT"
+          echo "VCPKG_COMMIT_ID=$VCPKG_COMMIT_ID"
+      
           echo "=== vcpkg version ==="
-          ./vcpkg/vcpkg version
+          "$VCPKG_ROOT/vcpkg" version
       
           echo "=== vcpkg.json ==="
           cat vcpkg.json
       
-          echo "=== vcpkg configuration ==="
+          echo "=== vcpkg-configuration.json ==="
           cat vcpkg-configuration.json 2>/dev/null || true
       
           echo "=== pkgconf registry ==="
-          cat ./vcpkg/versions/p-/pkgconf.json 2>/dev/null || true
+          cat "$VCPKG_ROOT/versions/p-/pkgconf.json" 2>/dev/null || true
       
-          echo "=== baseline ==="
-          grep -n '"pkgconf"' ./vcpkg/versions/baseline.json || true
+          echo "=== pkgconf in baseline ==="
+          grep -n -A5 -B5 '"pkgconf"' \
+            "$VCPKG_ROOT/versions/baseline.json" || true
       - name: Install vcpkg dependencies
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: ${{ matrix.job.vcpkg-triplet }}
